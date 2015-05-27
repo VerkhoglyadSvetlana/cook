@@ -1,0 +1,95 @@
+<div class="row">
+  <div class="col-md-6 col-md-offset-3">
+    <h2><%= I18n.t('interest.show') %></h2>
+
+    <dl class="dl-horizontal">
+      <dt>
+        <%= Interest.human_attribute_name(:book) %>
+      </dt>
+      <dd>
+        <%= link_to book_path(@interest.book) do %>
+          <%= @interest.book.name %>
+        <% end %>
+      </dd>
+      <dt>
+        <%= Interest.human_attribute_name(:review) %>
+      </dt>
+      <dd>
+        <%= @interest.review %>
+      </dd>
+      <% if @interest.start_reading? %>
+        <dt>
+          <%= Interest.human_attribute_name(:start_reading) %>
+        </dt>
+        <dd>
+            <%= @interest.start_reading.strftime('%e %B %Y') %>
+        </dd>
+      <% end %>
+      <% if @interest.finish_reading? %>
+        <dt>
+        <%= Interest.human_attribute_name(:finish_reading) %>
+        </dt>
+        <dd>
+          <%= @interest.finish_reading.strftime('%e %B %Y') %>
+        </dd>
+      <% end %>
+    </dl>
+
+    <% if user_signed_in? %>
+      <p>
+        <% if can? :update, @interest %>
+          <%= link_to I18n.t('interest.edit_action'), edit_interest_path(@interest),  class: "btn btn-default" %>
+        <% end %>
+        <% if can? :destroy, @interest %>
+          <%= button_to I18n.t('interest.drop_action'), interest_path(@interest), data: { confirm: I18n.t('interest.drop_confirm') }, method: :delete, class: "btn btn-danger" %>
+        <% end %>
+      </p>
+    <p>
+      <% else %>
+        <%= link_to I18n.t('interest.sign_in_to_edit'), new_user_session_path, :class => "btn btn-primary" %>
+      <% end %>
+    </p>
+
+    <% if user_signed_in? %>
+      <%= link_to I18n.t('interest.link_to_index'), current_user %>
+    <% end %>
+
+    <h3><%= I18n.t('interest.comments') %></h3>
+
+    <ul class="comment-list">
+      <% @interest.comments.each do |comment| %>
+        <li class="comment">
+          <div class="comment-info">
+            <%= link_to comment.user.full_name, user_path(comment.user) %>
+            <div class="comment-date"><%= comment.created_at.strftime('%e %B %Y в %H:%M') %></div>
+          </div>
+          <div class="comment-content">
+            <% if can? :update, comment %>
+              <%= button_to I18n.t('comment.drop_action'), comment_path(comment), method: :delete, class: "btn btn-danger pull-right" %>
+            <% end %>
+            <% if can? :destroy, comment %>
+              <%= button_to I18n.t('comment.edit_action'), edit_comment_path(comment), method: :get, class: "btn btn-warning pull-right" %>
+            <% end %>
+            <%= comment.content %>
+            <div class="clearfix"></div>
+          </div>
+        </li>
+      <% end %>
+    </ul>
+
+    <p>
+      <%= link_to new_interest_comment_path(@interest) do %>
+        <%=  I18n.t('interest.new_comment') %>
+      <% end %>
+    </p>
+
+    <% if @interest.comments.length > 0 %>
+      <%= pie_chart @interest.comments.joins(:user).group("users.last_name").count %>
+    <% else %>
+      <p>
+        <%= I18n.t('interest.no_comments') %>
+      </p>
+    <% end %>
+
+  </div>
+</div>

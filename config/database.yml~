@@ -1,0 +1,27 @@
+
+
+
+
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  username: reading2
+  password: 1234
+  host: localhost
+
+development:
+  <<: *default
+  database: reading_development
+
+
+  
+test:
+  <<: *default
+  database: reading_test
+
+
+production:
+  <<: *default
+  database: reading_production
+  username: reading
+  password: <%= ENV['READING_DATABASE_PASSWORD'] %>
