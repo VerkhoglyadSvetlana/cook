@@ -54,11 +54,6 @@ gem "groupdate"
 # Use debugger
 # gem 'debugger', group: [:development, :test]
 
-group :production do
-  gem 'pg'
-  gem 'rails_12factor'
-end
-
 group :test do
   gem 'rspec-rails'
   gem 'database_cleaner'
